@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b92a08c-e2f5-4423-96ae-6404e7a9ea07" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ru/otus/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ru/otus/Main.kt" afterDir="false" />
+    <list default="true" id="7b92a08c-e2f5-4423-96ae-6404e7a9ea07" name="Changes" comment="added 1st task">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,22 +25,22 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "luminorena"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;luminorena&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/luminorena/Kotlin-Basecamp.git",
-    "accountId": "c3054680-2f44-4855-9c8e-87e2c9a3437e"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/luminorena/Kotlin-Basecamp.git&quot;,
+    &quot;accountId&quot;: &quot;c3054680-2f44-4855-9c8e-87e2c9a3437e&quot;
   }
-}]]></component>
+}</component>
   <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\olech\.gradle\wrapper\dists\gradle-8.14-bin\38aieal9i53h9rfe7vjup95b9\gradle-8.14" javaHome="C:\Users\olech\.jdks\corretto-17.0.9" gradleVersion="8.14" />
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="3EB5oqMjgTtsd7WyTVg81SYkHkS" />
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
@@ -52,7 +51,8 @@
     "Gradle.kotlin-basecamp [:ru.otus.ru.otus.MainKt.main()].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "01-introduction",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "#1 on 01-introduction",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -105,11 +105,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779639301595</updated>
-      <workItem from="1779639303366" duration="3777000" />
+      <workItem from="1779639303366" duration="4532000" />
+      <workItem from="1779726341140" duration="47000" />
     </task>
+    <task id="LOCAL-00001" summary="added 1st task">
+      <option name="closed" value="true" />
+      <created>1779643180316</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1779643180316</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added 1st task" />
+    <option name="LAST_COMMIT_MESSAGE" value="added 1st task" />
   </component>
 </project>
