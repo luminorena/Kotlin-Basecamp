@@ -1,28 +1,27 @@
 package ru.basecamp.task_04
 
-import java.math.BigInteger
 
 /**
- * Перепишите digitsSum в хвостово-рекурсивную форму:
- * Уберите tailrec и попробуйте посчитать сумму цифр очень длинного числа (миллионы цифр — можно
- * сгенерировать). С tailrec — отработает мгновенно, без — упадёт с StackOverflowError.
- * Поэкспериментируйте, сделайте короткий вывод.
+ * Задача 4 (★ бонус). as? в действии
+ * Допустим, вы получаете данные «из внешнего источника» в виде Any (типа JSON-парсера). Реализуйте
+ * безопасное извлечение:
+ * Проверьте на: parseYear(2008), parseYear("2008"), parseYear("две тысячи восьмой"), parseYear(null),
+ * parseYear(2.5).
+ * fun parseYear(value: Any?): Int? {
+ * // если value — Int, вернуть как есть
+ * // если String — попытаться преобразовать в Int (toIntOrNull)
+ * // иначе — null
+ * // ИСПОЛЬЗУЙТЕ `as?`, не `as`
+ * }
+ * Проверьте на: parseYear(2008), parseYear("2008"), parseYear("две тысячи восьмой"), parseYear(null),
+ * parseYear(2.5).
+
  */
 
 fun main() {
-    val hugeNumber = "9".repeat(100000).toBigInteger()
-    println(digitsSumTail(hugeNumber))
+    println(parseYear(null))
 }
-
- tailrec fun digitsSumTail(n: BigInteger, acc: Int = 0): Int {
-     val ten = BigInteger.TEN
-     return if (n < ten) acc + n.toInt()
-     else digitsSumTail(n / ten, acc + (n % ten).toInt())
- }
-
-
-/*
-Чтобы сработало переполнение стека, надо переписать на BigInteger, с Long будет работать во всех случаях
-Ключевое слово tailrec заставляет компилятор оптимизировать рекурсию в цикл, и переполненения стека не будет
- */
+fun parseYear(value: Any?): Int? {
+    return (value as? Int) ?: (value as? String)?.toIntOrNull()
+}
 
