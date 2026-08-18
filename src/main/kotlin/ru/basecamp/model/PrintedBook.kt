@@ -17,8 +17,7 @@ class PrintedBook(
     ) {
         printBookCard(isbn, originalLanguage, translator, edition, withFancyFrame)
 
-        val (first, second) = LibraryRegistry.topTwo()
-        println("Лидер: ${first?.title}, второе место: ${second?.title}")
+        if (tags.isNotEmpty()) println("Тэги: ${tags.joinToString(", ")}")
 
         if (!isValidYear(year)) {
             println("Некорретный год книги $year")

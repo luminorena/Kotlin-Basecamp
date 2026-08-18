@@ -13,7 +13,8 @@ abstract class Book(
     val isbn: String? = null,
     val edition: String? = null,
     val originalLanguage: String? = null,
-    val translator: String? = null
+    val translator: String? = null,
+    val tags: Set<String> = emptySet()
 ) {
 
     companion object {
