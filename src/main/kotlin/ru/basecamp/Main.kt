@@ -1,6 +1,7 @@
 package ru.basecamp
 
 import ru.basecamp.io.LoanResult
+import ru.basecamp.model.Book
 import ru.basecamp.model.Genre
 import ru.basecamp.model.Library
 import ru.basecamp.model.Money
@@ -46,15 +47,55 @@ fun main() {
     library.addBook(book1)
     library.addBook(book2)
 
-    println(library.all())
-
     println("Всего: ${library.size}")
     println("По ISBN 7685916719993: ${library.findByIsbn("7685916719993")?.title}")
+
     library.place(book1, 0, 0)
     library.place(book2, 0, 1)
     library.printShelves()
     println("\nПо жанрам:")
+
     for ((genre, list) in library.byGenre()) {
         println("${genre.displayName}: ${list.joinToString { it.title }}")
     }
+
+    println("\nТоп по выдачам:")
+    for (b in library.topByLoans(3)) {
+        println("- ${b.title} (${b.totalLoans} выдач)")
+    }
+
+    println("\nТоп самых толстых PrintedBook:")
+    for (b in library.topThickest(3)) {
+        println("- ${b.title} (${b.pages} стр.)")
+    }
+
+    println("\nТоп авторов:")
+    for ((author, count) in library.topAuthors(3)) {
+        println("- $author: $count книг")
+    }
+
+    val printed = library.books.filterIsInstance<PrintedBook>()
+    val thinnest = printed.min()
+    val thickest = printed.max()
+    val sorted = printed.sorted()
+
+    val multisorted = library.all().sortedWith(
+        compareBy<Book> { it.genre.name }
+            .thenByDescending { it.year }
+            .thenBy { it.title }
+    )
+
+    println("Печатная книга ${printed}")
+    println("Самая тонкая книга ${thinnest}")
+    println("Самая толстая книга ${thickest}")
+    println("По возрастанию страниц ${sorted}")
+    println("Многокритериальная сортировка ${multisorted}")
+
+    println("Общая стоимость каталога: ${library.totalCatalogValue()}")
+
+    library.reserve("Аня", book1)
+    library.reserve("Боря", book2)
+    println("Очередь: ${library.queueSize()}")
+    val next = library.nextReservation()
+    println("Следующий — ${next?.first} получит «${next?.second?.title}»")
 }

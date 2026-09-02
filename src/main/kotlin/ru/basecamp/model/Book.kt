@@ -3,18 +3,18 @@ package ru.basecamp.model
 import ru.basecamp.io.LoanResult
 
 abstract class Book(
-    val title: String,
-    val author: String,
-    val year: Int,
-    val pages: Int,
-    val genre: Genre = Genre.OTHER,
-    val price: Money,
-    val initialCopies: Int,
-    val isbn: String? = null,
-    val edition: String? = null,
-    val originalLanguage: String? = null,
-    val translator: String? = null,
-    val tags: Set<String> = emptySet()
+    open val title: String,
+    open val author: String,
+    open val year: Int,
+    open val pages: Int,
+    open val genre: Genre = Genre.OTHER,
+    open val price: Money,
+    open val initialCopies: Int,
+    open val isbn: String? = null,
+    open val edition: String? = null,
+    open val originalLanguage: String? = null,
+    open val translator: String? = null,
+    open val tags: Set<String> = emptySet()
 ) {
 
     companion object {
@@ -66,4 +66,9 @@ abstract class Book(
         totalLoans++
         return LoanResult.Success
     }
+
+    fun List<Book>.ebooks(): List<EBook> = filterIsInstance<EBook>()
+    fun List<Book>.audioBooks(): List<AudioBook> = filterIsInstance<AudioBook>()
+    fun List<Book>.totalAudioMinutes(): Int =
+        filterIsInstance<AudioBook>().sumOf { it.durationMinutes }
 }

@@ -5,7 +5,8 @@ import ru.basecamp.io.LoanResult
 class PrintedBook(
     title: String, author: String, year: Int, pages: Int, genre: Genre, price: Money,
     initialCopies: Int, isbn: String
-) : Book(title, author, year, pages, genre, price, initialCopies, isbn) {
+) : Book(title, author, year, pages, genre, price, initialCopies, isbn),
+    Comparable<PrintedBook>{
     override val category = "Печатная книга"
     init { require(pages > 0) { "Страниц должно быть положительно" } }
     override fun printBookCard(
@@ -61,4 +62,6 @@ class PrintedBook(
     override fun lend(): LoanResult {
         return super.lend()
     }
+
+    override fun compareTo(other: PrintedBook): Int = pages.compareTo(other.pages)
 }

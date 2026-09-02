@@ -1,7 +1,7 @@
 package ru.basecamp.model
 
 class Library(val name: String, rows: Int = 5, cols: Int = 10) {
-    private val books = mutableListOf<Book>()
+    val books = mutableListOf<Book>()
     private val byIsbn = mutableMapOf<String, Book>()
     private val shelves: Array<Array<String?>> = Array(rows) { arrayOfNulls(cols) }
 
@@ -17,6 +17,40 @@ class Library(val name: String, rows: Int = 5, cols: Int = 10) {
         }
     }
 
+    private val reservationQueue: ArrayDeque<Pair<String, Book>> = ArrayDeque()
+    fun reserve(userName: String, book: Book) {
+        reservationQueue.addLast(userName to book)
+        println("$userName поставлен в очередь на «${book.title}»")
+    }
+    fun nextReservation(): Pair<String, Book>? = reservationQueue.removeFirstOrNull()
+    fun queueSize(): Int = reservationQueue.size
+
+    fun topByLoans(n: Int): List<Book> =
+        books.sortedByDescending { it.totalLoans }.take(n)
+
+    fun topThickest(n: Int): List<PrintedBook> =
+        books.filterIsInstance<PrintedBook>()
+            .sortedByDescending { it.pages }
+            .take(n)
+
+    fun topAuthors(n: Int): List<Pair<String, Int>> =
+        books.groupBy { it.author }
+            .map { (author, list) -> author to list.size }
+            .sortedByDescending { it.second }
+            .take(n)
+
+    fun totalCatalogValue(): Double =
+        books.sumOf { it.price.amount * it.copiesInStock }
+
+    fun totalCopies(): Int = books.sumOf { it.copiesInStock }
+
+    fun averagePrice(): Double =
+        if (books.isEmpty()) 0.0
+        else books.map { it.price.amount }.average()
+
+    fun hasAvailable(): Boolean = books.any { it.isAvailable }
+    fun unavailableCount(): Int = books.count { !it.isAvailable }
+
     fun addBookByAuthorYear(book: Book){
         byAuthorYear[book.author to book.year] = book
     }
@@ -27,14 +61,9 @@ class Library(val name: String, rows: Int = 5, cols: Int = 10) {
     fun all(): List<Book> = books.toList()
     override fun toString(): String = "Библиотека «$name» ($size книг)"
 
-    fun byGenre(): Map<Genre, List<Book>> {
-        val result = mutableMapOf<Genre, MutableList<Book>>()
-        for (book in books) {
-            val list = result.getOrPut(book.genre) { mutableListOf() }
-            list.add(book)
-        }
-        return result
-    }
+    fun byGenre(): Map<Genre, List<Book>> = books.groupBy { it.genre }
+
+    fun countByGenre(): Map<Genre, Int> = books.groupBy { it.genre }.mapValues { (_, list) -> list.size }
 
     fun place(book: Book, row: Int, col: Int): Boolean {
         require(row in shelves.indices && col in shelves[row].indices)
