@@ -1,11 +1,43 @@
 package ru.basecamp.model
 
+import ru.basecamp.io.LoanResult
+import ru.basecamp.util.Memoized
+import java.lang.reflect.Member
+
 class Library(val name: String, rows: Int = 5, cols: Int = 10) {
     val books = mutableListOf<Book>()
+    private val loans = mutableMapOf<Book, Member>()
     private val byIsbn = mutableMapOf<String, Book>()
     private val shelves: Array<Array<String?>> = Array(rows) { arrayOfNulls(cols) }
 
     private val byAuthorYear: MutableMap<Pair<String, Int>, Book> = mutableMapOf()
+    lateinit var defaultLoanPolicy: LoanPolicy
+
+    fun lend(book: Book, member: Member): LoanResult {
+        check(::defaultLoanPolicy.isInitialized) {
+            "Loan policy not configured"
+        }
+
+        val libraryBook = books.find { it.isbn == book.isbn }
+            ?: return LoanResult.BookNotInLibrary(book.isbn)
+
+        val loanedCopies = loans.keys.count { it.isbn == book.isbn }
+        val available = libraryBook.initialCopies - loanedCopies
+
+        if (available <= 0) {
+            return LoanResult.NotAvailable(available)
+        }
+
+        val activeLoans = loans.values.count { it == member }
+
+        if (!defaultLoanPolicy.canLend(member, book, activeLoans)) {
+            return LoanResult.TooManyOnHand(defaultLoanPolicy.maxBooksPerMember)
+        }
+
+        loans[book] = member
+        return LoanResult.Success
+    }
+
 
     fun find(author: String, year: Int): Book? = byAuthorYear[author to year]
 
@@ -61,7 +93,11 @@ class Library(val name: String, rows: Int = 5, cols: Int = 10) {
     fun all(): List<Book> = books.toList()
     override fun toString(): String = "Библиотека «$name» ($size книг)"
 
-    fun byGenre(): Map<Genre, List<Book>> = books.groupBy { it.genre }
+    private val genreIndex: Map<Genre, List<Book>> by lazy {
+        books.groupBy { it.genre }
+    }
+
+    fun byGenre(): Map<Genre, List<Book>> = genreIndex
 
     fun countByGenre(): Map<Genre, Int> = books.groupBy { it.genre }.mapValues { (_, list) -> list.size }
 
@@ -77,5 +113,15 @@ class Library(val name: String, rows: Int = 5, cols: Int = 10) {
             for (cell in row) print(if (cell == null) ". " else "□ ")
             println()
         }
+    }
+
+    private val genreCountDelegate = Memoized {
+        println("[Memo] Computing genre counts...")
+        books.groupingBy { it.genre }.eachCount()
+    }
+    val genreCount: Map<Genre, Int> by genreCountDelegate
+    fun addBookWithDsl(book: Book) {
+        books.add(book)
+        genreCountDelegate.reset()
     }
 }
