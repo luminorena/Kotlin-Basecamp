@@ -43,18 +43,10 @@ class LibraryBuilder(private val name: String) {
         builder.configure()
         books.add(builder.build())
 
-//        val lib = library("Test") {
-//            book {
-//                title = "X"
-//                book { // КОМПИЛЯТОР должен запретить!
-//                    title = "Y"
-//                }
-//            }
-//        }
     }
 
     fun build(): Library = Library(name).apply {
-        books.forEach { addBook(it) }
+        books.forEach { addBook(it as Book) }
     }
 }
 

@@ -78,22 +78,12 @@ fun main() {
         println("- $author: $count книг")
     }
 
-    val printed = library.books.filterIsInstance<PrintedBook>()
-    val thinnest = printed.min()
-    val thickest = printed.max()
-    val sorted = printed.sorted()
 
     val multisorted = library.all().sortedWith(
         compareBy<Book> { it.genre.name }
             .thenByDescending { it.year }
             .thenBy { it.title }
     )
-
-    println("Печатная книга ${printed}")
-    println("Самая тонкая книга ${thinnest}")
-    println("Самая толстая книга ${thickest}")
-    println("По возрастанию страниц ${sorted}")
-    println("Многокритериальная сортировка ${multisorted}")
 
     println("Общая стоимость каталога: ${library.totalCatalogValue()}")
 

@@ -1,5 +1,7 @@
 package ru.basecamp.model
 
+import java.util.Collections.emptySet
+
 data class EBook(
     override val title: String,
     override val author: String,

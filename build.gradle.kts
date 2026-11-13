@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "2.2.20"
 }
 
-group = "ru.otus"
+group = "ru.basecamp"
 version = "1.0-SNAPSHOT"
 
 repositories {
