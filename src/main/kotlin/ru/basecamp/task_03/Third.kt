@@ -1,16 +1,21 @@
 package ru.basecamp.task_03
 
-/**
- * Задача 3. Рекурсия — сумма цифр ISBN
- * Добавьте функцию, которая считает сумму цифр числового ISBN рекурсивно:
- * База рекурсии: n < 10 - вернуть n.toInt(). Шаг: (n % 10).toInt() + digitsSum(n / 10).
- * После реализации добавьте в карточку строку "Сумма цифр ISBN: <число>".
- */
+import ru.basecamp.task_02.printBookCard
 
 fun main() {
-    println("Сумма цифр ISBN: " + digitsSum(1212345678743))
+    printBookCard(
+        title = "Война и мир",
+        author = "Лев Толстой",
+        year = 1869,
+        pages = 1225,
+        price = 799.90,
+        quantity = 3,
+        isbn = 1212345678743L,
+        withFancyFrame = true
+    )
 }
 
-fun digitsSum(n: Long): Int = if (n < 10) n.toInt() else (n % 10).toInt() + digitsSum(n / 10)
-
+fun digitsSum(n: Long): Int =
+    if (n < 10) n.toInt()
+    else (n % 10).toInt() + digitsSum(n / 10)
 

@@ -2,13 +2,6 @@ package ru.basecamp.task_04
 
 import java.math.BigInteger
 
-/**
- * Перепишите digitsSum в хвостово-рекурсивную форму:
- * Уберите tailrec и попробуйте посчитать сумму цифр очень длинного числа (миллионы цифр — можно
- * сгенерировать). С tailrec — отработает мгновенно, без — упадёт с StackOverflowError.
- * Поэкспериментируйте, сделайте короткий вывод.
- */
-
 fun main() {
     val hugeNumber = "9".repeat(100000).toBigInteger()
     println(digitsSumTail(hugeNumber))

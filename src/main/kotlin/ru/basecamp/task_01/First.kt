@@ -1,34 +1,5 @@
 package ru.basecamp.task_01
 
-import java.util.Locale.getDefault
-
-/**
- * Задача 1. Декомпозиция main()
- * Разбейте код на функции с понятными именами и сигнатурами. Как минимум:
- * Требования:
- * • Однострочные функции — где это естественно (formatPrice, categorizePages).
- * • Полные функции с телом — где логика сложнее.
- * • main() после рефакторинга должен помещаться примерно в 15 строк
- * и читаться как сценарий: «прочитать - провалидировать - напечатать -
- * симулировать».
- * • Везде, где функция возвращает значение, — возвращайте его,
- * а не печатайте внутри. Печать — отдельно. (Принцип «команда vs. запрос».)
- * 💡 На этом этапе у вас ещё нет классов и data-классов.
- * Книгу можно «таскать» как набор отдельных параметров — это специально неудобно,
- * чтобы в ДЗ #7 вы сказали: «о, теперь нам нужен класс».
- * fun readBookData(): /* кортеж/объект с полями книги — пока несколько отдельных
- * readln() в main */
- * fun cleanIsbn(rawIsbn: String): String +
- * fun isValidIsbn(isbn: String): Boolean +
- * fun validateBook(title: String, year: Int, pages: Int, price: Double, copies: Int): List<String> +
- * fun categorizePages(pages: Int): String +
- * fun formatPrice(price: Double): String // "%.2f руб." +
- * fun makeShortTitle(title: String, maxLen: Int = 30): String +
- * fun makeAuthorInitials(fullName: String): String +
- * fun printBookCard(/* параметры */)
- * fun simulateLoans(copies: Int, requestedLoans: Int) +
- */
-
 private val CLEAN_REGEX = Regex("[\\s-]")
 private val DIGITS_REGEX = Regex("\\d+")
 
@@ -40,31 +11,82 @@ private const val VERY_THICK_BOOK = "Очень толстая книга"
 private const val ENORMOUS_BOOK = "Кирпич"
 
 fun main() {
-    readBookData()
-    cleanIsbn("1234556789543")
-    validateBook("Над пропастью во ржи", 1990, 200, 500.50, 40)
-    simulateLoans(120, 10)
-    makeAuthorInitials("Лев Николаевич Толстой")
-    printBookCard("Война и мир", "Лев Толстой", 1869, 1225, 799.90, 3)
-    makeShortTitle("Война и мир")
-    categorizePages(500)
-    formatPrice(3467.0)
+    val bookData = readBookData()
+
+    val title = bookData[0]
+    val author = bookData[1]
+    val year = bookData[2].toInt()
+    val pages = bookData[3].toInt()
+    val price = bookData[4].toDouble()
+    val copiesInStock = bookData[5].toInt()
+
+    val errors = validateBook(
+        title = title,
+        year = year,
+        pages = pages,
+        price = price,
+        copiesInStock = copiesInStock
+    )
+
+    if (errors.isEmpty()) {
+        printBookCard(
+            title = title,
+            author = author,
+            year = year,
+            pages = pages,
+            price = price,
+            quantity = copiesInStock
+        )
+    } else {
+        for (error in errors) {
+            println(error)
+        }
+    }
+
+    println("Категория по количеству страниц: ${categorizePages(pages)}")
+    println("Короткое название: ${makeShortTitle(title)}")
+    println("Инициалы автора: ${makeAuthorInitials(author)}")
+    println("Цена в формате: ${formatPrice(price)}")
+
+    print("Введите ISBN: ")
+    val rawIsbn = readln()
+
+    val isbn = cleanIsbn(rawIsbn)
+
+    if (isValidIsbn(isbn)) {
+        println("ISBN валиден: $isbn")
+    } else {
+        println(
+            "ISBN не валиден: $isbn. " +
+                    "ISBN должен быть равен 13-и символам, содержать только цифры " +
+                    "и иметь корректную контрольную сумму."
+        )
+    }
+
+    print("Сколько экземпляров книги есть в библиотеке? ")
+    val copies = readln().toInt()
+
+    print("Сколько читателей хотят взять книгу? ")
+    val requestedLoans = readln().toInt()
+
+    val loansResult = simulateLoans(copies, requestedLoans)
+    println(loansResult)
 }
 
 fun readBookData(): List<String> {
     val bookData = mutableListOf<String>()
     print("Введите название книги: ")
-    val title: String = readln()
+    val title = readln()
     print("Введите автора: ")
-    val author: String = readln()
+    val author = readln()
     print("Введите год издания: ")
-    val year: Int = readln().toInt()
+    val year: Int? = readln().toIntOrNull()
     print("Введите количество страниц: ")
-    val pages: Int = readln().toInt()
+    val pages: Int? = readln().toIntOrNull()
     print("Введите цену (руб.): ")
     val price: Double = readln().toDouble()
     print("Введите количество экземпляров: ")
-    val quantity: Int = readln().toInt()
+    val quantity: Int? = readln().toIntOrNull()
 
     bookData.add(title)
     bookData.add(author)
@@ -77,36 +99,51 @@ fun readBookData(): List<String> {
 }
 
 fun cleanIsbn(rawIsbn: String): String {
-    val cleanIsbn = rawIsbn.replace(CLEAN_REGEX, "")
+    return rawIsbn.replace(CLEAN_REGEX, "")
+}
 
-    if (cleanIsbn.length != 13 || !cleanIsbn.matches(DIGITS_REGEX)) {
-        return "ISBN должен быть равен 13-и символам и содержать только цифры"
+fun isValidIsbn(isbn: String): Boolean {
+    if (isbn.length != 13 || !isbn.matches(DIGITS_REGEX)) {
+        return false
     }
 
     var result = 0
-    for (i in cleanIsbn.indices) {
-        result += if (i % 2 == 0) {
-            cleanIsbn[i].digitToInt() * 1
-        }
-        else {
-            cleanIsbn[i].digitToInt() * 3
-        }
+    for (i in isbn.indices) {
+        result += isbn[i].digitToInt() * if (i % 2 == 0) 1 else 3
     }
 
-    if (result % 10 == 0) println("ISBN валиден, контрольная сумма равна $result")
-    else println("ISBN не валиден, контрольная сумма равна $result, попробуйте ещё раз")
-
-    return cleanIsbn
+    return result % 10 == 0
 }
 
-fun validateBook(title: String, year: Int, pages: Int, price: Double, copiesInStock: Int): List<String> {
+
+fun validateBook(
+    title: String,
+    year: Int,
+    pages: Int,
+    price: Double,
+    copiesInStock: Int
+): List<String> {
     val errorsList = mutableListOf<String>()
 
-    if (year !in 1450..2026) errorsList.add(year.toString())
-    if (pages !in 1..10_000) errorsList.add(pages.toString())
-    if (price < 0) errorsList.add(price.toString())
-    if (copiesInStock < 0) errorsList.add(copiesInStock.toString())
-    if (title.isEmpty()) errorsList.add(title)
+    if (year !in 1450..2026) {
+        errorsList.add("Год $year вне диапазона 1450-2026")
+    }
+
+    if (pages !in 1..10_000) {
+        errorsList.add("Количество страниц $pages вне диапазона 1-10000")
+    }
+
+    if (price < 0) {
+        errorsList.add("Цена $price не может быть отрицательной")
+    }
+
+    if (copiesInStock < 0) {
+        errorsList.add("Количество экземпляров $copiesInStock не может быть отрицательным")
+    }
+
+    if (title.isBlank()) {
+        errorsList.add("Название книги не может быть пустым или состоять из пробелов")
+    }
 
     return errorsList
 }
@@ -126,42 +163,41 @@ fun makeShortTitle(title: String, maxLen: Int = 30): String = if (title.length >
 
 fun formatPrice(price: Double): String = String.format("%.2f", price)
 
-fun simulateLoans(copies: Int, requestedLoans: Int) {
+fun simulateLoans(copies: Int, requestedLoans: Int): String {
     var totalLoans = 0
-    var currentlyOnHand = copies
+    var currentlyOnHand = 0
 
-    println("Сколько раз выдать книгу ?")
-    val issuesQuantity: Int = readln().toInt()
-
-    for(i in 1..issuesQuantity) {
-        if (currentlyOnHand < requestedLoans) {
+    for (i in 1..requestedLoans) {
+        if (currentlyOnHand < copies) {
             currentlyOnHand++
             totalLoans++
-            println("Выдача $i: на руках $currentlyOnHand из $requestedLoans")
-        }
-        else {
+            println("Выдача $i: на руках $currentlyOnHand из $copies")
+        } else {
             println("Выдача $i: отказ — все экземпляры заняты")
             break
         }
     }
 
-    val freeBooks = requestedLoans - currentlyOnHand
+    val freeBooks = copies - currentlyOnHand
 
-    println("""
+    return """
         Финальная статистика: всего выдач $totalLoans, на руках находятся $currentlyOnHand книг,
         свободно $freeBooks книг
-        """)
+    """.trimIndent()
 }
 
 fun makeAuthorInitials(fullName: String): String {
-    var res = ""
-    val split = fullName.split(" ")
-    for (i in split.indices) {
-        val word = split[i]
-        res = if (i == split.lastIndex) word
-        else word.take(1).uppercase(getDefault()) + ". "
-    }
-    return res
+    val words = fullName.split(" ")
+
+    return words
+        .mapIndexed { index, word ->
+            if (index == words.lastIndex) {
+                word
+            } else {
+                word.take(1).uppercase() + "."
+            }
+        }
+        .joinToString(" ")
 }
 
 fun printBookCard(title: String, author: String, year: Int, pages: Int, price: Double, quantity: Int) {
