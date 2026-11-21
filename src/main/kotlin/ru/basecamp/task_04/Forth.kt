@@ -4,18 +4,42 @@ import java.math.BigInteger
 
 fun main() {
     val hugeNumber = "9".repeat(100000).toBigInteger()
+
+    println("Запуск с tailrec:")
     println(digitsSumTail(hugeNumber))
+
+    println("Запуск без tailrec:")
+    println(digitsSumNoTailrec(hugeNumber))
 }
 
- tailrec fun digitsSumTail(n: BigInteger, acc: Int = 0): Int {
-     val ten = BigInteger.TEN
-     return if (n < ten) acc + n.toInt()
-     else digitsSumTail(n / ten, acc + (n % ten).toInt())
- }
+tailrec fun digitsSumTail(
+    n: BigInteger,
+    acc: Int = 0
+): Int {
+    val ten = BigInteger.TEN
 
+    return if (n < ten) {
+        acc + n.toInt()
+    } else {
+        digitsSumTail(
+            n = n / ten,
+            acc = acc + (n % ten).toInt()
+        )
+    }
+}
 
-/*
-Чтобы сработало переполнение стека, надо переписать на BigInteger, с Long будет работать во всех случаях
-Ключевое слово tailrec заставляет компилятор оптимизировать рекурсию в цикл, и переполненения стека не будет
- */
+fun digitsSumNoTailrec(
+    n: BigInteger,
+    acc: Int = 0
+): Int {
+    val ten = BigInteger.TEN
 
+    return if (n < ten) {
+        acc + n.toInt()
+    } else {
+        digitsSumNoTailrec(
+            n = n / ten,
+            acc = acc + (n % ten).toInt()
+        )
+    }
+}

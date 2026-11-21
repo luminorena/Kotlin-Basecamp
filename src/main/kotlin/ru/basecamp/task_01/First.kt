@@ -43,11 +43,31 @@ fun main() {
         }
     }
 
+    printBookInfo(
+        title = title,
+        author = author,
+        pages = pages,
+        price = price
+    )
+
+    checkIsbn()
+
+    runLoans()
+}
+
+fun printBookInfo(
+    title: String,
+    author: String,
+    pages: Int,
+    price: Double
+) {
     println("Категория по количеству страниц: ${categorizePages(pages)}")
     println("Короткое название: ${makeShortTitle(title)}")
     println("Инициалы автора: ${makeAuthorInitials(author)}")
     println("Цена в формате: ${formatPrice(price)}")
+}
 
+fun checkIsbn() {
     print("Введите ISBN: ")
     val rawIsbn = readln()
 
@@ -62,7 +82,9 @@ fun main() {
                     "и иметь корректную контрольную сумму."
         )
     }
+}
 
+fun runLoans() {
     print("Сколько экземпляров книги есть в библиотеке? ")
     val copies = readln().toInt()
 
@@ -148,42 +170,45 @@ fun validateBook(
     return errorsList
 }
 
-fun categorizePages(pages: Int): String {
-    return when {
-        pages <=0 -> VALIDATE_ERROR
-        pages < 50 -> BROCHURE
-        pages in 1..199 -> STANDARD_BOOK
-        pages in 200..499 -> THICK_BOOK
-        pages in 500..999 -> VERY_THICK_BOOK
-        else -> ENORMOUS_BOOK
-    }
+fun categorizePages(pages: Int): String = when {
+    pages <= 0 -> VALIDATE_ERROR
+    pages < 50 -> BROCHURE
+    pages in 50..199 -> STANDARD_BOOK
+    pages in 200..499 -> THICK_BOOK
+    pages in 500..999 -> VERY_THICK_BOOK
+    else -> ENORMOUS_BOOK
 }
 
-fun makeShortTitle(title: String, maxLen: Int = 30): String = if (title.length > maxLen) title.take(maxLen) + "..." else title
+fun makeShortTitle(title: String, maxLen: Int = 30): String =
+    if (title.length > maxLen) {
+        title.take(maxLen - 3) + "..."
+    } else {
+        title
+    }
 
-fun formatPrice(price: Double): String = String.format("%.2f", price)
+fun formatPrice(price: Double): String = "%.2f руб.".format(price)
 
 fun simulateLoans(copies: Int, requestedLoans: Int): String {
     var totalLoans = 0
     var currentlyOnHand = 0
 
+    val log = mutableListOf<String>()
+
     for (i in 1..requestedLoans) {
         if (currentlyOnHand < copies) {
             currentlyOnHand++
             totalLoans++
-            println("Выдача $i: на руках $currentlyOnHand из $copies")
+            log.add("Выдача $i: на руках $currentlyOnHand из $copies")
         } else {
-            println("Выдача $i: отказ — все экземпляры заняты")
+            log.add("Выдача $i: отказ — все экземпляры заняты")
             break
         }
     }
 
-    val freeBooks = copies - currentlyOnHand
+    log.add("Итого выдано: $totalLoans")
+    log.add("Свободно осталось: ${copies - currentlyOnHand}")
 
-    return """
-        Финальная статистика: всего выдач $totalLoans, на руках находятся $currentlyOnHand книг,
-        свободно $freeBooks книг
-    """.trimIndent()
+    return log.joinToString("\n")
 }
 
 fun makeAuthorInitials(fullName: String): String {
@@ -200,14 +225,23 @@ fun makeAuthorInitials(fullName: String): String {
         .joinToString(" ")
 }
 
-fun printBookCard(title: String, author: String, year: Int, pages: Int, price: Double, quantity: Int) {
-    println("""
-           Карточка книги:
-           Название: $title,
-           Автор:$author,
-           Год: $year,
-           Количество страниц: $pages,
-           Цена: $price,
-           Количество: $quantity
-           """)
+fun printBookCard(
+    title: String,
+    author: String,
+    year: Int,
+    pages: Int,
+    price: Double,
+    quantity: Int
+) {
+    println(
+        """
+        Карточка книги:
+        Название: $title,
+        Автор: $author,
+        Год: $year,
+        Количество страниц: $pages,
+        Цена: ${formatPrice(price)},
+        Количество: $quantity
+        """.trimIndent()
+    )
 }
