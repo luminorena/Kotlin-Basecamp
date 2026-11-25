@@ -6,12 +6,17 @@ private val DIGITS_REGEX = Regex("\\d+")
 fun main() {
     val bookData = readBookData()
 
-    val title = bookData[0]
-    val author = bookData[1]
-    val year = bookData[2]
-    val pages = bookData[3]
-    val price = bookData[4]
-    val copiesInStock = bookData[5]
+    val language = bookData[0]
+    val translator = bookData[1]
+    val edition = bookData[2]
+    val isbn = bookData[3]
+
+    val title = bookData[4]
+    val author = bookData[5]
+    val year = bookData[6]
+    val pages = bookData[7]
+    val price = bookData[8]
+    val copiesInStock = bookData[9]
 
     val errors = validateBook(
         title = title,
@@ -27,8 +32,12 @@ fun main() {
             author = author,
             year = year,
             pages = pages,
-            price = price,
-            quantity = copiesInStock
+            price = price?.toDouble(),
+            quantity = copiesInStock,
+            language = language,
+            translator = translator,
+            edition = edition,
+            isbn = isbn
         )
     } else {
         for (error in errors) {
@@ -109,8 +118,7 @@ fun readBookData(): List<String?> {
     return bookData
 }
 
-fun formatPrice(price: String?): String = "%.2f руб.".format(price)
-
+fun formatPrice(price: Double?): String = "%.2f руб.".format(price ?: 0.0)
 
 fun isValidIsbn(isbn: String): Boolean {
     if (isbn.length != 13 || !isbn.matches(DIGITS_REGEX)) {
@@ -174,8 +182,12 @@ fun printBookCard(
     author: String?,
     year: String?,
     pages: String?,
-    price: String?,
-    quantity: String?
+    price: Double?,
+    quantity: String?,
+    language: String? = null,
+    translator: String? = null,
+    edition: String? = null,
+    isbn: String? = null
 ) {
     println(
         """
@@ -188,6 +200,22 @@ fun printBookCard(
         Количество: $quantity
         """.trimIndent()
     )
+
+    language?.takeIf { it.isNotBlank() }?.let {
+        println("Язык: $it")
+    }
+
+    translator?.takeIf { it.isNotBlank() }?.let {
+        println("Переводчик: $it")
+    }
+
+    edition?.takeIf { it.isNotBlank() }?.let {
+        println("Издание: $it")
+    }
+
+    isbn?.takeIf { it.isNotBlank() }?.let {
+        println("ISBN: $it")
+    }
 }
 
 fun simulateLoans(copies: Int, requestedLoans: Int): String {
